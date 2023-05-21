@@ -1,0 +1,7 @@
+boxdetect
+matplotlib
+pdf2image
+fastapi
+uvicorn[standard]
+aiofiles
+python-multipart
