@@ -1,7 +1,9 @@
+import glob
+import shutil
+
 from boxdetect import config
-from boxdetect.pipelines import get_boxes, get_checkboxes
-import matplotlib.pyplot as plt
-from pdf2image import convert_from_path
+from boxdetect.pipelines import get_checkboxes
+from pdf2jpg import pdf2jpg
 
 
 def get_config():
@@ -32,40 +34,15 @@ def get_config():
 
 def get_checkboxes_from_pdf(pdf_file_path):
     check_box_dict = dict()
-    # Store Pdf with convert_from_path function
-    images = convert_from_path(pdf_file_path)
 
-    for i in range(len(images)):
-        # Save pages as images in the pdf
-        file_name = 'page' + str(i) + '.jpg'
-        images[i].save(file_name, 'JPEG')
+    result = pdf2jpg.convert_pdf2jpg(pdf_file_path, "", pages="ALL")
+    image_dir = result[0]["output_pdfpath"]
 
-        # rects, grouping_rects, image, output_image = get_boxes(
-        #     file_name, cfg=get_config(), plot=False)
-        #
-        #
-        #
-        # plt.figure(figsize=(20, 20))
-        # plt.imshow(output_image)
-        # # plt.show()
-        # # save image
-        # plt.savefig(f'output_image_{i}.jpg')
-        # # output_image.save(f'output_image_{i}.jpg')
-        # check_box_dict[i] = rects
-
-        checkboxes = get_checkboxes(file_name, cfg=get_config(), px_threshold=0.1, plot=False, verbose=True)
-
-        # print("Output object type: ", type(checkboxes))
+    for i, image_path in enumerate(sorted(glob.glob(f"{image_dir}/*.jpg"))):
+        checkboxes = get_checkboxes(image_path, cfg=get_config(), px_threshold=0.1, plot=False, verbose=True)
         _page_key = f"page_{i}"
         check_box_dict[_page_key] = []
         for checkbox in checkboxes:
-            # print("Checkbox bounding rectangle (x,y,width,height): ", checkbox[0])
-            # print("Result of `contains_pixels` for the checkbox: ", checkbox[1])
-            # print("Display the cropout of checkbox:")
-            # plt.figure(figsize=(1, 1))
-            # plt.imshow(checkbox[2])
-            # plt.show()
-
             check_box_dict[_page_key].append(
                 {
                     "x": checkbox[0][0],
@@ -75,6 +52,8 @@ def get_checkboxes_from_pdf(pdf_file_path):
                     "contains_pixels": checkbox[1]
                 }
             )
+
+    shutil.rmtree(image_dir)
 
     return check_box_dict
 

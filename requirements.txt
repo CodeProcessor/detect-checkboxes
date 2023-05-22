@@ -1,6 +1,6 @@
 boxdetect
 matplotlib
-pdf2image
+Pdf2jpg
 fastapi
 uvicorn[standard]
 aiofiles
