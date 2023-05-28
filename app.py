@@ -14,7 +14,7 @@ def read_root():
 
 
 @app.post("/checkboxes/")
-async def create_item(
+async def find_checkboxes(
         file: UploadFile = File(..., alias="file", description="Attach the file to be processed"),
 ):
     _file_basename, _ext = os.path.splitext(file.filename)
@@ -28,5 +28,4 @@ async def create_item(
 
 if __name__ == '__main__':
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)
