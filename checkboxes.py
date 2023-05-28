@@ -43,7 +43,7 @@ def get_checkboxes_from_pdf(pdf_file_path, output=False):
 
         # Detect checkboxes
         checkboxes = get_checkboxes(image_path, cfg=get_config(), px_threshold=0.1, plot=False, verbose=False)
-        _page_key = f"page_{i}"
+        _page_key = f"page_{i+1}"
         check_box_dict[_page_key] = []
 
         # Add to a dictionary
